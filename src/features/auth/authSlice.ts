@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@supabase/supabase-js";
 import { login } from "./authThunk";
 
@@ -19,7 +19,15 @@ const initialState: AuthState = {
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    authChanged: (
+      state,
+      action: PayloadAction<{ user: User | null; isAdmin: boolean }>
+    ) => {
+      state.user = action.payload.user;
+      state.isAdmin = action.payload.isAdmin;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(login.pending, (state) => {
