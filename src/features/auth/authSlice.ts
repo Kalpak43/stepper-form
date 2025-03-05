@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@supabase/supabase-js";
-import { login } from "./authThunk";
+import { login, logout } from "./authThunk";
 
 interface AuthState {
   user: User | null;
@@ -27,6 +27,9 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
       state.isAdmin = action.payload.isAdmin;
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -41,8 +44,22 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error as string;
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.isAdmin = action.payload.isAdmin;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error as string;
       });
   },
 });
+
+export const { setLoading } = authSlice.actions;
 
 export default authSlice.reducer;

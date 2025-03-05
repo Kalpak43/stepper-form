@@ -5,23 +5,37 @@ import Loginpage from "./pages/Loginpage";
 import { useAppDispatch, useAppSelector } from "./app/hook";
 import { useEffect } from "react";
 import { checkSession } from "./features/auth/authThunk";
+import Dashboardpage from "./pages/Dashboardpage";
+import NotAuthorizedpage from "./pages/NotAuthorizedpage";
+import Profilepage from "./pages/Profilepage";
+import {
+  AdminProtectedRoute,
+  UserProtectedRoute,
+} from "./components/ProtectedRoute";
 
 function App() {
   const dispatch = useAppDispatch();
-  const { user, isAdmin } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(checkSession())
-  }, [dispatch ])
+    dispatch(checkSession());
+  }, [dispatch]);
 
   useEffect(() => {
-    console.log(user, isAdmin);
-  }, [user, isAdmin]);
+    console.log(loading);
+  }, [loading]);
 
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<Loginpage />} />
+      <Route path="/not-authorized" element={<NotAuthorizedpage />} />
+      <Route element={<AdminProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboardpage />} />
+      </Route>
+      <Route element={<UserProtectedRoute />}>
+        <Route path="/profile" element={<Profilepage />} />
+      </Route>
     </Routes>
   );
 }
