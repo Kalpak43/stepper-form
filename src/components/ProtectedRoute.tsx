@@ -14,6 +14,6 @@ export function AdminProtectedRoute() {
   return user && isAdmin ? (
     <Outlet />
   ) : (
-    <Navigate to="/not-authorized" replace />
+    <Navigate to="/login" replace />
   );
 }

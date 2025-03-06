@@ -21,10 +21,13 @@ import { FormikProps, useFormik } from "formik";
 import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
 import { saveEmployeeData } from "../utils";
+import { useAppDispatch } from "../app/hook";
+import { addEmployee } from "../features/employees/employeeSlice";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
 const EmployeeStepperForm: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -296,11 +299,13 @@ const EmployeeStepperForm: React.FC = () => {
                 console.log("SOOMETHINK");
                 setLoading(true);
                 const data = await saveEmployeeData(formik.values);
-                console.log(data);
+                if (data?.success && data.employee) {
+                  dispatch(addEmployee(data.employee));
+                }
                 setLoading(false);
               }}
             >
-              Submit
+              {loading ? "Submitting..." : "Submit"}
             </Button>
           ) : (
             <Button variant="contained" color="primary" onClick={handleNext}>

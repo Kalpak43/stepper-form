@@ -1,9 +1,4 @@
-import {
-  Box,
-  Fab,
-  IconButton,
-  Modal,
-} from "@mui/material";
+import { Box, Fab, IconButton, Modal } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { useEffect, useState } from "react";
 import EmployeeStepperForm from "../components/EmployeeStepper";
@@ -11,6 +6,7 @@ import { fetchEmployees } from "../features/employees/employeeThunk";
 import EmployeeCard from "../components/EmployeeCard";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router";
 
 const style = {
   position: "absolute",
@@ -22,11 +18,16 @@ const style = {
 
 function Dashboardpage() {
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
   const { employees } = useAppSelector((state) => state.employee);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user]);
 
   useEffect(() => {
     dispatch(fetchEmployees());

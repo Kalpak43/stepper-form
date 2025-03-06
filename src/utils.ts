@@ -113,14 +113,15 @@ export const saveEmployeeData = async (employee: Employee) => {
     return {
       success: false,
       error: "Unable to register user",
-      employee: {
-        ...employee,
-      },
     };
   } else {
     return {
       success: true,
       error: null,
+      employee: {
+        ...employee,
+        profile: profileUrl,
+      } as EmployeeWithId,
     };
   }
 };
