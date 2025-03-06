@@ -15,7 +15,11 @@ const initialState: employeeState = {
 export const employeeSlice = createSlice({
   name: "employees",
   initialState,
-  reducers: {},
+  reducers: {
+    addEmployee: (state, action) => {
+      state.employees.push(action.payload as EmployeeWithId);
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchEmployees.pending, (state) => {

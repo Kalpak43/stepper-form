@@ -45,17 +45,42 @@ const uploadProfileImage = async (file: File) => {
   return urlData.publicUrl;
 };
 
+const signupUser = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
+
+  if (error || !data.user) return null;
+
+  return data.user.id;
+};
+
 export const saveEmployeeData = async (employee: Employee) => {
+  const uuid = await signupUser(employee.work_email, employee.password);
+
+  if (!uuid)
+    return {
+      success: false,
+      error: "Unable to register user",
+    };
+
+  console.log(0);
   let profileUrl = null;
+
+  console.log(1);
 
   if (employee.profile) {
     profileUrl = await uploadProfileImage(employee.profile);
+    console.log(2);
     if (!profileUrl) {
       console.error("Failed to upload profile image.");
+      console.log(3);
       return;
     }
   }
 
+  console.log(4);
   const { error } = await supabase.from("employees").insert([
     {
       profile: profileUrl,
@@ -79,13 +104,24 @@ export const saveEmployeeData = async (employee: Employee) => {
       shift: employee.shift,
       leaves: employee.leaves,
       password: employee.password, // Ideally, hash this before storing
+      uuid: uuid,
     },
   ]);
+  console.log(5);
 
   if (error) {
-    console.error("Error saving employee data:", error.message);
+    return {
+      success: false,
+      error: "Unable to register user",
+      employee: {
+        ...employee,
+      },
+    };
   } else {
-    console.log("Employee data saved successfully.");
+    return {
+      success: true,
+      error: null,
+    };
   }
 };
 
@@ -95,6 +131,21 @@ export const fetchEmployees = async () => {
   if (error) {
     console.error("Error fetching employees:", error.message);
     return [];
+  }
+
+  return data;
+};
+
+export const fetchEmployeeFromId = async (id: string) => {
+  const { data, error } = await supabase
+    .from("employees")
+    .select("*") // Select all columns, modify if needed
+    .eq("uuid", id) // Filter by UUID column
+    .single(); // Ensure we get only one record
+
+  if (error) {
+    console.error("Error fetching employee:", error);
+    return null;
   }
 
   return data;

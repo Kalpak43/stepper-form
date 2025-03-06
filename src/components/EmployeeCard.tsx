@@ -172,7 +172,13 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
           }}
         />
         <Box className="">
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Typography
               variant="h6"
               sx={{
@@ -183,12 +189,6 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               Location:{" "}
             </Typography>
             <Typography variant="body1">{employee.location}</Typography>
-
-            <Box className=" mt-2">
-              <div className="flex items-center gap-2">
-                <p></p>
-              </div>
-            </Box>
           </Box>
         </Box>
         <Divider

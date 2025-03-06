@@ -22,11 +22,11 @@ import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
 import { saveEmployeeData } from "../utils";
 
-
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
 const EmployeeStepperForm: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const employeeSchema = Yup.object().shape({
     profile: Yup.mixed()
@@ -293,7 +293,11 @@ const EmployeeStepperForm: React.FC = () => {
               variant="contained"
               color="primary"
               onClick={async () => {
-                await saveEmployeeData(formik.values);
+                console.log("SOOMETHINK");
+                setLoading(true);
+                const data = await saveEmployeeData(formik.values);
+                console.log(data);
+                setLoading(false);
               }}
             >
               Submit
