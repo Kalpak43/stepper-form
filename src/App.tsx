@@ -12,6 +12,7 @@ import {
   AdminProtectedRoute,
   UserProtectedRoute,
 } from "./components/ProtectedRoute";
+import Layout from "./Layout";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -30,11 +31,13 @@ function App() {
       <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<Loginpage />} />
       <Route path="/not-authorized" element={<NotAuthorizedpage />} />
-      <Route element={<AdminProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboardpage />} />
-      </Route>
-      <Route element={<UserProtectedRoute />}>
-        <Route path="/profile" element={<Profilepage />} />
+      <Route element={<Layout />}>
+        <Route element={<AdminProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboardpage />} />
+        </Route>
+        <Route element={<UserProtectedRoute />}>
+          <Route path="/profile" element={<Profilepage />} />
+        </Route>
       </Route>
     </Routes>
   );
