@@ -28,7 +28,12 @@ function Profilepage() {
     if (!user) navigate("/login");
   }, [user]);
 
-  return <div>{data && <EmployeeCard employee={data} />}</div>;
+  return (
+    <div>
+      {loading && <p>Loading...</p>}
+      {data && <EmployeeCard employee={data} />}
+    </div>
+  );
 }
 
 export default Profilepage;

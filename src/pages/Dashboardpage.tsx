@@ -1,4 +1,12 @@
-import { Box, Fab, IconButton, Modal } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Fab,
+  IconButton,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { useEffect, useState } from "react";
 import EmployeeStepperForm from "../components/EmployeeStepper";
@@ -7,6 +15,9 @@ import EmployeeCard from "../components/EmployeeCard";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router";
+import EmployeeTable from "../components/EmployeeTable";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import BadgeIcon from "@mui/icons-material/Badge";
 
 const style = {
   position: "absolute",
@@ -24,6 +35,8 @@ function Dashboardpage() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [tabular, setTabular] = useState(false);
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -75,12 +88,32 @@ function Dashboardpage() {
         </Box>
       </Modal>
 
-      <div className="space-y-4 my-8 grid grid-cols-4 gap-4">
-        {employees.length > 0 &&
-          employees.map((employee) => (
-            <EmployeeCard key={employee.id} employee={employee} />
-          ))}
+      <div className="flex items-center justify-between">
+        <Typography variant="h5">Employee List</Typography>
+        <ButtonGroup variant="outlined" aria-label="Basic button group">
+          <Button onClick={() => setTabular(true)}>
+            <TableChartIcon />
+          </Button>
+          <Button onClick={() => setTabular(false)}>
+            <BadgeIcon />
+          </Button>
+        </ButtonGroup>
       </div>
+
+      {!tabular ? (
+        <div className="space-y-4 my-8 grid grid-cols-4 gap-4">
+          {employees.length > 0 &&
+            employees.map((employee) => (
+              <EmployeeCard key={employee.id} employee={employee} />
+            ))}
+        </div>
+      ) : (
+        employees && (
+          <div className="my-8">
+            <EmployeeTable employees={employees} />
+          </div>
+        )
+      )}
     </div>
   );
 }

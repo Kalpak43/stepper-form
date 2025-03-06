@@ -7,13 +7,12 @@ import {
   Card,
   CardContent,
   Divider,
-  Grid2,
   IconButton,
   Modal,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
