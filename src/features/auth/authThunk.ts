@@ -13,19 +13,52 @@ export const checkSession = createAsyncThunk(
   "auth/checkSession",
   async (_, { dispatch }) => {
     dispatch(setLoading(true));
-    supabase.auth.onAuthStateChange(async (_, session) => {
+
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      dispatch(authChanged({ user: null, isAdmin: false }));
+      dispatch(setLoading(false));
+      return;
+    }
+
+    // Fetch the user's role from the 'profiles' table
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user role:", profileError.message);
+      dispatch(authChanged({ user, isAdmin: false }));
+    } else {
+      const isAdmin = profile?.role === "admin";
+      dispatch(authChanged({ user, isAdmin }));
+    }
+
+    dispatch(setLoading(false));
+
+    // Listen for future auth state changes
+    supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        const user = session.user;
+        const { data: updatedProfile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", session.user.id)
+          .single();
 
-        // Example logic to check if the user is an admin (adjust as needed)
-        //   @ts-ignore
-        const isAdmin = jwtDecode(session.access_token).role === "admin";
-
-        dispatch(authChanged({ user, isAdmin }));
-        dispatch(setLoading(false));
+        dispatch(
+          authChanged({
+            user: session.user,
+            isAdmin: updatedProfile?.role === "admin",
+          })
+        );
       } else {
         dispatch(authChanged({ user: null, isAdmin: false }));
-        dispatch(setLoading(false));
       }
     });
   }

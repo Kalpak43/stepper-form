@@ -1,9 +1,10 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { useAppDispatch } from "../app/hook";
 import { logout } from "../features/auth/authThunk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmployeeFormModal from "../components/EmployeeFormModal";
 import EmployeeStepperForm from "../components/EmployeeStepper";
+import { fetchEmployees } from "../utils";
 
 const style = {
   position: "absolute",
@@ -18,6 +19,12 @@ function Dashboardpage() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+    fetchEmployees().then((res) => {
+      console.log(res);
+    });
+  }, []);
 
   return (
     <div className="p-8">

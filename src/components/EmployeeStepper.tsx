@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -19,6 +19,7 @@ import { supabase } from "../supbase";
 import { FormikProps, useFormik } from "formik";
 import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
+import { saveEmployeeData } from "../utils";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
@@ -147,36 +148,92 @@ const EmployeeStepperForm: React.FC = () => {
     if (!values.display_name) {
       errors.display_name = "Display name is required";
     }
+    if (!values.password) {
+      errors.password = "Password is required";
+    }
+    if (!values.work_email) {
+      errors.work_email = "Work Email is required";
+    }
+    if (!values.phone_number) {
+      errors.phone_number = "Phone number is required";
+    }
+    if (!values.DOB) {
+      errors.DOB = "DOB is required";
+    }
+
+    return errors;
+  };
+  const stepTwoValidation = (values: Employee) => {
+    const errors: Partial<Employee> = {};
+
+    if (!values.job_title) {
+      errors.job_title = "Job Title is required";
+    }
+    if (!values.department) {
+      errors.department = "Department is required";
+    }
+    if (!values.type) {
+      errors.type = "Type is required";
+    }
+    if (!values.level) {
+      errors.level = "Level is required";
+    }
+    if (!values.DOJ) {
+      errors.DOJ = "DOJ is required";
+    }
+    if (!values.location) {
+      errors.location = "Phone number is required";
+    }
+    if (!values.salary) {
+      errors.salary = -1;
+    }
+    if (!values.frequency) {
+      errors.frequency = "Mention a Pay cycle";
+    }
+    if (!values.supervisor) {
+      errors.supervisor = "Supervisor is required";
+    }
 
     return errors;
   };
 
   const handleNext = async () => {
     let errors = {};
-    if (activeStep == 0) stepOneValidation(formik.values);
+    if (activeStep == 0) errors = stepOneValidation(formik.values);
+    if (activeStep == 1) errors = stepTwoValidation(formik.values);
 
-    const isValid = await formik.validateForm();
-    console.log(formik.values);
-
-    console.log(isValid);
     if (Object.keys(errors).length === 0) {
       setActiveStep((prev) => prev + 1);
+      const isValid = await formik.validateForm();
+
+      if (Object.keys(isValid).length === 0) {
+        console.log("IS valid");
+      }
     } else {
       // Set touched for the fields to display validation messages
       formik.setTouched({
         first_name: true,
         last_name: true,
         display_name: true,
+        password: true,
+        work_email: true,
+        phone_number: true,
+        DOB: true,
+        job_title: true,
+        department: true,
+        type: true,
+        level: true,
+        DOJ: true,
+        location: true,
+        salary: true,
+        frequency: true,
+        supervisor: true,
       });
     }
   };
 
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
-  };
-
-  const setImage = (image: File) => {
-    formik.setFieldValue("profile", image);
   };
 
   return (
@@ -209,7 +266,13 @@ const EmployeeStepperForm: React.FC = () => {
             Back
           </Button>
           {activeStep === steps.length - 1 ? (
-            <Button variant="contained" color="primary" onClick={() => {}}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={async () => {
+                await saveEmployeeData(formik.values);
+              }}
+            >
               Submit
             </Button>
           ) : (
@@ -230,15 +293,24 @@ export const BasicDetailsField = ({
 }: {
   formik: FormikProps<Employee>;
 }) => {
+  useEffect(() => {
+    const { first_name, last_name } = formik.values;
+    if (first_name || last_name) {
+      formik.setFieldValue(
+        "display_name",
+        `${first_name.trim()} ${last_name.trim()}`.trim()
+      );
+    }
+  }, [formik.values.first_name, formik.values.last_name]);
+
+  const setImage = (image: File) => {
+    formik.setFieldValue("profile", image);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">
       <div>
-        <CircleImageInput
-          value={formik.values.profile}
-          setValue={(x: File) => {
-            formik.setFieldValue("profile", x);
-          }}
-        />
+        <CircleImageInput value={formik.values.profile} setValue={setImage} />
       </div>
       <TextField
         label="Display Name"
