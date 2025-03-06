@@ -1,6 +1,5 @@
 interface Employee {
-  id: number;
-  profile: string;
+  profile: File | null;
   work_email: string;
   email: string;
   first_name: string;
@@ -23,4 +22,10 @@ interface Employee {
     annual: number;
     sick: number;
   };
+  password: string;
+}
+
+interface EmployeeWithId extends Employee {
+  id: number;
+  profile: string;
 }
