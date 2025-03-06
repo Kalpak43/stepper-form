@@ -4,7 +4,9 @@ import {
   Button,
   Card,
   CardContent,
+  Divider,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -14,12 +16,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { supabase } from "../supbase";
 
 import { FormikProps, useFormik } from "formik";
 import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
 import { saveEmployeeData } from "../utils";
+
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
@@ -237,10 +239,21 @@ const EmployeeStepperForm: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardContent>
+    <Card className="relative">
+      <CardContent
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary.light,
+          color: "white",
+        }}
+      >
         <Typography variant="h6">Employee Creation Wizard</Typography>
       </CardContent>
+
+      <Divider
+        sx={{
+          marginBottom: 1,
+        }}
+      />
 
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
@@ -249,6 +262,12 @@ const EmployeeStepperForm: React.FC = () => {
           </Step>
         ))}
       </Stepper>
+
+      <Divider
+        sx={{
+          marginBlock: 1,
+        }}
+      />
 
       <CardContent>
         <Box sx={{ mt: 3 }}>
@@ -259,9 +278,13 @@ const EmployeeStepperForm: React.FC = () => {
           {activeStep === 2 && <WorkDetailsField formik={formik} />}
         </Box>
       </CardContent>
-
+      <Divider
+        sx={{
+          marginBottom: 1,
+        }}
+      />
       <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button disabled={activeStep === 0} onClick={handleBack}>
             Back
           </Button>

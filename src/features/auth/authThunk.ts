@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../../supbase";
 import { checkAdmin } from "../../utils";
 import { User } from "@supabase/supabase-js";
-import { jwtDecode } from "jwt-decode";
 import { setLoading } from "./authSlice";
 
 interface AuthPayload {
@@ -43,7 +42,7 @@ export const checkSession = createAsyncThunk(
     dispatch(setLoading(false));
 
     // Listen for future auth state changes
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    supabase.auth.onAuthStateChange(async (_, session) => {
       if (session?.user) {
         const { data: updatedProfile } = await supabase
           .from("profiles")
