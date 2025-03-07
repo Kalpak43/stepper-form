@@ -17,3 +17,7 @@
     overflow-y: scroll;
   }
 }
+
+.over-ride-shadow {
+  box-shadow: -3px 0 5px rgba(43, 29, 29, 0.1) !important;
+}

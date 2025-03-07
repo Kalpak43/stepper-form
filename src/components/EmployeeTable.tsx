@@ -186,6 +186,7 @@ function EmployeeTable({ employees }: { employees: EmployeeWithId[] }) {
                   zIndex: 2,
                   backgroundColor: "#e5ccff",
                 }}
+                className="over-ride-shadow"
               >
                 Actions
               </TableCell>
@@ -220,19 +221,27 @@ function EmployeeTable({ employees }: { employees: EmployeeWithId[] }) {
                 <TableCell>
                   {new Date(employee.DOB).toLocaleDateString("en-GB")}
                 </TableCell>
-                <TableCell className="capitalize">{employee.job_title}</TableCell>
-                <TableCell className="capitalize">{employee.department}</TableCell>
+                <TableCell className="capitalize">
+                  {employee.job_title}
+                </TableCell>
+                <TableCell className="capitalize">
+                  {employee.department}
+                </TableCell>
                 <TableCell className="capitalize">{employee.level}</TableCell>
-                <TableCell className="capitalize">{employee.supervisor}</TableCell>
+                <TableCell className="capitalize">
+                  {employee.supervisor}
+                </TableCell>
                 <TableCell>
                   {new Date(employee.DOJ).toLocaleDateString("en-GB")}
                 </TableCell>
-                <TableCell className="capitalize">{employee.location}</TableCell>
+                <TableCell className="capitalize">
+                  {employee.location}
+                </TableCell>
                 <TableCell className="capitalize">{employee.shift}</TableCell>
                 <TableCell>
                   ₹{employee.salary.toLocaleString()} / {employee.frequency}
                 </TableCell>
-                <TableCell className="capitalize"> 
+                <TableCell className="capitalize">
                   {employee.leaves.annual} Annual, {employee.leaves.sick} Sick
                 </TableCell>
                 <TableCell
@@ -281,7 +290,10 @@ function EmployeeTable({ employees }: { employees: EmployeeWithId[] }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <EditFormStepper employee={employees[active]} />
+          <EditFormStepper
+            employee={employees[active]}
+            handleClose={handleCloseEdit}
+          />
           <IconButton
             sx={{
               position: "absolute",

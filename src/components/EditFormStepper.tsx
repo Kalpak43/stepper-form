@@ -29,9 +29,10 @@ import { LoaderCircle } from "lucide-react";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
-const EditFormStepper: React.FC<{ employee: EmployeeWithId }> = ({
-  employee,
-}) => {
+const EditFormStepper: React.FC<{
+  employee: EmployeeWithId;
+  handleClose: () => void;
+}> = ({ employee, handleClose }) => {
   const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -307,6 +308,7 @@ const EditFormStepper: React.FC<{ employee: EmployeeWithId }> = ({
                   console.log("DONE", data.employee);
                   dispatch(updateEmployee(data.employee));
                   toast.success("Employee details edited Successfully");
+                  handleClose();
                 }
 
                 if (data?.error) {

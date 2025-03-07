@@ -147,7 +147,7 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <EditFormStepper employee={employee} />
+          <EditFormStepper employee={employee} handleClose={handleCloseEdit} />
           <IconButton
             sx={{
               position: "absolute",
