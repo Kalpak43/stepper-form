@@ -77,7 +77,7 @@ const EmployeeStepperForm: React.FC<{
 
   const handleNext = async () => {
     const isValid = await formik.validateForm();
-
+    console.log(isValid);
     if (Object.keys(isValid).length === 0) {
       setActiveStep((prev) => prev + 1);
     } else {

@@ -340,7 +340,7 @@ export const createEmployeeSchema = [
   // Step 1: Basic Information
   Yup.object({
     profile: Yup.mixed()
-      .test("fileRequired", "Profile image is required", (value) => !!value)
+      .nullable()
       .test("fileType", "Only images are allowed", (value) =>
         value
           ? ["image/jpeg", "image/png", "image/gif"].includes(
