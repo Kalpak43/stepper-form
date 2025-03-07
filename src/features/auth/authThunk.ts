@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../../supbase";
-import { checkAdmin } from "../../utils";
+import { checkAdmin, fetchEmployeeFromId } from "../../utils";
 import { User } from "@supabase/supabase-js";
 import { setLoading } from "./authSlice";
 
@@ -33,10 +33,37 @@ export const checkSession = createAsyncThunk(
 
     if (profileError) {
       console.error("Error fetching user role:", profileError.message);
-      dispatch(authChanged({ user, isAdmin: false }));
+      const empData = await fetchEmployeeFromId(user.id);
+
+      if (!empData) {
+        await supabase.auth.signOut();
+        dispatch(
+          authChanged({
+            user: null,
+            isAdmin: false,
+          })
+        );
+      } else {
+        dispatch(authChanged({ user, isAdmin: false }));
+      }
     } else {
       const isAdmin = profile?.role === "admin";
-      dispatch(authChanged({ user, isAdmin }));
+      if (!isAdmin) {
+        const empData = await fetchEmployeeFromId(user.id);
+        if (!empData) {
+          await supabase.auth.signOut();
+          dispatch(
+            authChanged({
+              user: null,
+              isAdmin: false,
+            })
+          );
+        } else {
+          dispatch(authChanged({ user, isAdmin }));
+        }
+      } else {
+        dispatch(authChanged({ user, isAdmin }));
+      }
     }
 
     dispatch(setLoading(false));
@@ -52,6 +79,25 @@ export const checkSession = createAsyncThunk(
           .single();
 
         console.log(2);
+        const isAdmin = updatedProfile?.role === "admin";
+        if (!isAdmin) {
+          console.log("HERE");
+          const empData = await fetchEmployeeFromId(session.user.id);
+          if (!empData) {
+            await supabase.auth.signOut();
+            dispatch(
+              authChanged({
+                user: null,
+                isAdmin: false,
+              })
+            );
+
+            return;
+          }
+          console.log("HERE2");
+        }
+
+        console.log("HERE3");
         dispatch(
           authChanged({
             user: session.user,
@@ -87,6 +133,16 @@ export const login = createAsyncThunk(
 
     const { user } = data;
     const isAdmin = await checkAdmin();
+
+    if (!isAdmin) {
+      console.log(1);
+      const empData = await fetchEmployeeFromId(data.user.id);
+      console.log("------------------------------------------", empData);
+      if (!empData) {
+        await supabase.auth.signOut();
+        return thunkAPI.rejectWithValue("Not Allowed to log in.");
+      }
+    }
 
     return {
       user,
