@@ -306,12 +306,12 @@ const EditFormStepper: React.FC<{ employee: EmployeeWithId }> = ({
                 if (data?.success && data.employee) {
                   console.log("DONE", data.employee);
                   dispatch(updateEmployee(data.employee));
-                  toast.success("Employee added Successfully");
+                  toast.success("Employee details edited Successfully");
                 }
 
                 if (data?.error) {
                   console.log("DONE", data.error);
-                  toast.error("There was an error in adding employee");
+                  toast.error("There was an error in saving the changes");
                 }
                 setLoading(false);
               }}

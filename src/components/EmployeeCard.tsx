@@ -21,6 +21,12 @@ import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import CloseIcon from "@mui/icons-material/Close";
 import CakeIcon from "@mui/icons-material/Cake";
 import EditFormStepper from "./EditFormStepper";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deleteEmployee } from "../utils";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "../app/hook";
+import { filterEmployees } from "../features/employees/employeeSlice";
 
 const style = {
   position: "absolute",
@@ -31,6 +37,7 @@ const style = {
 };
 
 function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
+  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -41,14 +48,14 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
 
   return (
     <>
-      <Card key={employee.id} className="text-center h-full">
+      <Card key={employee.id} className="text-center h-full relative">
         <Box
           className="mb-16 border-b"
           sx={{
             backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.2),
           }}
         >
-          <div className="w-[100px] aspect-square rounded-full bg-#424242-400 overflow-hidden mx-auto translate-y-1/2 border">
+          <div className="w-[100px] aspect-square rounded-full bg-#424242-400 overflow-hidden mx-auto translate-y-1/2 border bg-white">
             <Avatar
               src={employee.profile}
               className=""
@@ -85,16 +92,32 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
           >
             View Profile
           </Button>
-          <Button
-            variant="contained"
-            onClick={handleOpenEdit}
-            sx={{
-              marginTop: 4,
+        </CardContent>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+          }}
+        >
+          <IconButton color="primary" onClick={handleOpenEdit}>
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            color="error"
+            onClick={async () => {
+              const res = await deleteEmployee(employee.uuid);
+              if (res.error) {
+                toast.error(res.error);
+              } else {
+                dispatch(filterEmployees(employee.uuid));
+                toast.success("Deleted");
+              }
             }}
           >
-            Edit Profile
-          </Button>
-        </CardContent>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
       </Card>
       <Modal
         open={open}

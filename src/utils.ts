@@ -224,3 +224,19 @@ export const editEmployeeData = async (employee: EditableEmployee) => {
     };
   }
 };
+
+export const deleteEmployee = async (id: string) => {
+  const { error } = await supabase.from("employees").delete().eq("uuid", id);
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  } else {
+    return {
+      success: true,
+      error: null,
+    };
+  }
+};

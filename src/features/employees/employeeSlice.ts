@@ -32,6 +32,11 @@ export const employeeSlice = createSlice({
         };
       }
     },
+    filterEmployees: (state, action) => {
+      state.employees = state.employees.filter(
+        (emp) => emp.uuid !== action.payload
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -49,6 +54,7 @@ export const employeeSlice = createSlice({
   },
 });
 
-export const { addEmployee, updateEmployee } = employeeSlice.actions;
+export const { addEmployee, updateEmployee, filterEmployees } =
+  employeeSlice.actions;
 
 export default employeeSlice.reducer;
