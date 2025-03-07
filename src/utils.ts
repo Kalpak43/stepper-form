@@ -1,4 +1,5 @@
 import { supabase } from "./supbase";
+import * as Yup from "yup";
 
 export const checkAdmin = async (): Promise<boolean> => {
   const { data, error } = await supabase.auth.getUser();
@@ -240,3 +241,188 @@ export const deleteEmployee = async (id: string) => {
     };
   }
 };
+
+export const stepSchemas = [
+  // Step 1: Basic Information
+  Yup.object({
+    profile: Yup.mixed()
+      .test("fileRequired", "Profile image is required", (value) => !!value)
+      .test("fileType", "Only images are allowed", (value) => {
+        if (typeof value === "string") {
+          // If it's a URL, assume it's valid
+          return true;
+        }
+        if (value instanceof File) {
+          return ["image/jpeg", "image/png", "image/gif"].includes(value.type);
+        }
+        return false; // Neither a file nor a URL
+      }),
+    email: Yup.string().email("Invalid email"),
+    first_name: Yup.string().required("First name is required"),
+    last_name: Yup.string().required("Last name is required"),
+    display_name: Yup.string().required("Display name is required"),
+    phone_number: Yup.string()
+      .matches(/^\+?[0-9]{10,15}$/, "Invalid phone number")
+      .required("Phone number is required"),
+    gender: Yup.mixed<"male" | "female" | "other">()
+      .oneOf(["male", "female", "other"], "Invalid gender")
+      .required("Gender is required"),
+    DOB: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("max-date", "DOB cannot be in the future", (value) =>
+        value ? new Date(value) <= new Date() : false
+      )
+      .required("Date of Birth is required"),
+    work_email: Yup.string()
+      .email("Invalid work email")
+      .required("Work email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters long")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(
+        /[@$!%*?&]/,
+        "Password must contain at least one special character (@, $, !, %, *, ?, &)"
+      )
+      .required("Password is required"),
+  }),
+
+  // Step 2: Job Details
+  Yup.object({
+    job_title: Yup.string().required("Job title is required"),
+    department: Yup.string().required("Department is required"),
+    type: Yup.string().required("Employement Type is required"),
+    level: Yup.mixed<"junior" | "mid" | "senior" | "lead">()
+      .oneOf(["junior", "mid", "senior", "lead"], "Invalid level")
+      .required("Level is required"),
+    DOJ: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("min-date", "DOB cannot be in the past", (value) =>
+        value ? new Date(value) >= new Date() : false
+      )
+      .required("Date of Birth is required"),
+    location: Yup.mixed<"office" | "remote" | "hybrid" | "">()
+      .oneOf(["office", "remote", "hybrid"], "Invalid location")
+      .required("Location is required"),
+    salary: Yup.number()
+      .min(0, "Salary must be at least 0")
+      .required("Salary is required"),
+    frequency: Yup.mixed<"monthly" | "weekly" | "biweekly">()
+      .oneOf(["monthly", "weekly", "biweekly"], "Invalid Salary frequency")
+      .required("Salary frequency is required"),
+    supervisor: Yup.string().required("Supervisor is required"),
+  }),
+
+  // Step 3: Salary & Leave
+  Yup.object({
+    shift: Yup.mixed<"day" | "night" | "flexible">()
+      .oneOf(["day", "night", "flexible"], "Invalid Shift")
+      .required("Shift is required"),
+    leaves: Yup.object().shape({
+      annual: Yup.number()
+        .integer("Annual leaves must be an integer")
+        .min(0, "Annual leaves cannot be negative")
+        .required("Annual leaves are required"),
+      sick: Yup.number()
+        .integer("Sick leaves must be an integer")
+        .min(0, "Sick leaves cannot be negative")
+        .required("Sick leaves are required"),
+    }),
+  }),
+];
+
+export const createEmployeeSchema = [
+  // Step 1: Basic Information
+  Yup.object({
+    profile: Yup.mixed()
+      .test("fileRequired", "Profile image is required", (value) => !!value)
+      .test("fileType", "Only images are allowed", (value) =>
+        value
+          ? ["image/jpeg", "image/png", "image/gif"].includes(
+              (value as File).type
+            )
+          : true
+      ),
+    email: Yup.string().email("Invalid email"),
+    first_name: Yup.string().required("First name is required"),
+    last_name: Yup.string().required("Last name is required"),
+    display_name: Yup.string().required("Display name is required"),
+    phone_number: Yup.string()
+      .matches(/^\+?[0-9]{10,15}$/, "Invalid phone number")
+      .required("Phone number is required"),
+    gender: Yup.mixed<"male" | "female" | "other">()
+      .oneOf(["male", "female", "other"], "Invalid gender")
+      .required("Gender is required"),
+    DOB: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("max-date", "DOB cannot be in the future", (value) =>
+        value ? new Date(value) <= new Date() : false
+      )
+      .required("Date of Birth is required"),
+    work_email: Yup.string()
+      .email("Invalid work email")
+      .required("Work email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters long")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(
+        /[@$!%*?&]/,
+        "Password must contain at least one special character (@, $, !, %, *, ?, &)"
+      )
+      .required("Password is required"),
+  }),
+
+  // Step 2: Job Details
+  Yup.object({
+    job_title: Yup.string().required("Job title is required"),
+    department: Yup.string().required("Department is required"),
+    type: Yup.string().required("Employement Type is required"),
+    level: Yup.mixed<"junior" | "mid" | "senior" | "lead">()
+      .oneOf(["junior", "mid", "senior", "lead"], "Invalid level")
+      .required("Level is required"),
+    DOJ: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("min-date", "DOB cannot be in the past", (value) =>
+        value ? new Date(value) >= new Date() : false
+      )
+      .required("Date of Birth is required"),
+    location: Yup.mixed<"office" | "remote" | "hybrid" | "">()
+      .oneOf(["office", "remote", "hybrid"], "Invalid location")
+      .required("Location is required"),
+    salary: Yup.number()
+      .min(0, "Salary must be at least 0")
+      .required("Salary is required"),
+    frequency: Yup.mixed<"monthly" | "weekly" | "biweekly">()
+      .oneOf(["monthly", "weekly", "biweekly"], "Invalid Salary frequency")
+      .required("Salary frequency is required"),
+    supervisor: Yup.string().required("Supervisor is required"),
+  }),
+
+  // Step 3: Salary & Leave
+  Yup.object({
+    shift: Yup.mixed<"day" | "night" | "flexible">()
+      .oneOf(["day", "night", "flexible"], "Invalid Shift")
+      .required("Shift is required"),
+    leaves: Yup.object().shape({
+      annual: Yup.number()
+        .integer("Annual leaves must be an integer")
+        .min(0, "Annual leaves cannot be negative")
+        .required("Annual leaves are required"),
+      sick: Yup.number()
+        .integer("Sick leaves must be an integer")
+        .min(0, "Sick leaves cannot be negative")
+        .required("Sick leaves are required"),
+    }),
+  }),
+];

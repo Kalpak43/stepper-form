@@ -83,7 +83,7 @@ function Dashboardpage() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} className="form-modal">
-          <EmployeeStepperForm />
+          <EmployeeStepperForm handleClose={handleClose} />
           <IconButton
             sx={{
               position: "absolute",

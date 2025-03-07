@@ -18,9 +18,8 @@ import {
 } from "@mui/material";
 
 import { FormikProps, useFormik } from "formik";
-import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
-import { saveEmployeeData } from "../utils";
+import { createEmployeeSchema, saveEmployeeData } from "../utils";
 import { useAppDispatch } from "../app/hook";
 import { addEmployee } from "../features/employees/employeeSlice";
 import PasswordInput from "./PasswordInput";
@@ -29,87 +28,12 @@ import { LoaderCircle } from "lucide-react";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
-const EmployeeStepperForm: React.FC = () => {
+const EmployeeStepperForm: React.FC<{
+  handleClose: () => void;
+}> = ({ handleClose }) => {
   const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  const employeeSchema = Yup.object().shape({
-    profile: Yup.mixed()
-      .test("fileRequired", "Profile image is required", (value) => !!value)
-      .test("fileType", "Only images are allowed", (value) =>
-        value
-          ? ["image/jpeg", "image/png", "image/gif"].includes(
-              (value as File).type
-            )
-          : true
-      ),
-    work_email: Yup.string()
-      .email("Invalid work email")
-      .required("Work email is required"),
-    email: Yup.string().email("Invalid email"),
-    first_name: Yup.string().required("First name is required"),
-    last_name: Yup.string().required("Last name is required"),
-    display_name: Yup.string().required("Display name is required"),
-    phone_number: Yup.string()
-      .matches(/^\+?[0-9]{10,15}$/, "Invalid phone number")
-      .required("Phone number is required"),
-    gender: Yup.mixed<"male" | "female" | "other">()
-      .oneOf(["male", "female", "other"], "Invalid gender")
-      .required("Gender is required"),
-    DOB: Yup.string()
-      .test("valid-date", "Invalid date", (value) =>
-        value ? !isNaN(new Date(value).getTime()) : false
-      )
-      .test("max-date", "DOB cannot be in the future", (value) =>
-        value ? new Date(value) <= new Date() : false
-      )
-      .required("Date of Birth is required"),
-    job_title: Yup.string().required("Job title is required"),
-    department: Yup.string().required("Department is required"),
-    type: Yup.string().required("Employement Type is required"),
-    level: Yup.mixed<"junior" | "mid" | "senior" | "lead">()
-      .oneOf(["junior", "mid", "senior", "lead"], "Invalid level")
-      .required("Level is required"),
-    DOJ: Yup.string()
-      .test("valid-date", "Invalid date", (value) =>
-        value ? !isNaN(new Date(value).getTime()) : false
-      )
-      .required("Date of Joning is required"),
-    location: Yup.mixed<"office" | "remote" | "hybrid" | "">()
-      .oneOf(["office", "remote", "hybrid"], "Invalid location")
-      .required("Location is required"),
-    salary: Yup.number()
-      .min(0, "Salary must be at least 0")
-      .required("Salary is required"),
-    frequency: Yup.mixed<"monthly" | "weekly" | "biweekly">()
-      .oneOf(["monthly", "weekly", "biweekly"], "Invalid Salary frequency")
-      .required("Salary frequency is required"),
-    supervisor: Yup.string().required("Supervisor is required"),
-    shift: Yup.mixed<"day" | "night" | "flexible">()
-      .oneOf(["day", "night", "flexible"], "Invalid Shift")
-      .required("Shift is required"),
-    leaves: Yup.object().shape({
-      annual: Yup.number()
-        .integer("Annual leaves must be an integer")
-        .min(0, "Annual leaves cannot be negative")
-        .required("Annual leaves are required"),
-      sick: Yup.number()
-        .integer("Sick leaves must be an integer")
-        .min(0, "Sick leaves cannot be negative")
-        .required("Sick leaves are required"),
-    }),
-    password: Yup.string()
-      .min(8, "Password must be at least 8 characters long")
-      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-      .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(
-        /[@$!%*?&]/,
-        "Password must contain at least one special character (@, $, !, %, *, ?, &)"
-      )
-      .required("Password is required"),
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -138,7 +62,7 @@ const EmployeeStepperForm: React.FC = () => {
       },
       password: "",
     },
-    validationSchema: employeeSchema,
+    validationSchema: createEmployeeSchema[activeStep],
     onSubmit: async (values) => {
       // setLoading(true);
       // try {
@@ -151,80 +75,10 @@ const EmployeeStepperForm: React.FC = () => {
     },
   });
 
-  const stepOneValidation = (values: any) => {
-    const errors: Partial<any> = {};
-
-    if (!values.first_name) {
-      errors.first_name = "First name is required";
-    }
-    if (!values.last_name) {
-      errors.last_name = "Last name is required";
-    }
-    if (!values.display_name) {
-      errors.display_name = "Display name is required";
-    }
-    if (!values.password) {
-      errors.password = "Password is required";
-    }
-    if (values.gender.trim() === "") {
-      errors.password = "Password is required";
-    }
-    if (!values.work_email) {
-      errors.work_email = "Work Email is required";
-    }
-    if (!values.phone_number) {
-      errors.phone_number = "Phone number is required";
-    }
-    if (!values.DOB || isNaN(new Date(values.DOB).getTime())) {
-      errors.DOB = "DOB is required";
-    }
-
-    return errors;
-  };
-  const stepTwoValidation = (values: any) => {
-    const errors: Partial<any> = {};
-
-    if (!values.job_title) {
-      errors.job_title = "Job Title is required";
-    }
-    if (!values.department) {
-      errors.department = "Department is required";
-    }
-    if (!values.type) {
-      errors.type = "Type is required";
-    }
-    if (!values.level) {
-      errors.level = "Level is required";
-    }
-    if (!values.DOJ || isNaN(new Date(values.DOJ).getTime())) {
-      errors.DOJ = "DOJ is required";
-    }
-    if (!values.location) {
-      errors.location = "Phone number is required";
-    }
-    if (isNaN(values.salary)) {
-      errors.salary = -1;
-    }
-    if (!values.frequency) {
-      errors.frequency = "Mention a Pay cycle";
-    }
-    if (!values.supervisor) {
-      errors.supervisor = "Supervisor is required";
-    }
-
-    return errors;
-  };
-
   const handleNext = async () => {
-    let errors = {};
-    if (activeStep == 0) errors = stepOneValidation(formik.values);
-    if (activeStep == 1) errors = stepTwoValidation(formik.values);
-    if (Object.keys(errors).length === 0) {
-      const isValid = await formik.validateForm();
+    const isValid = await formik.validateForm();
 
-      if (Object.keys(isValid).length === 0) {
-        console.log(Object.keys(isValid).length);
-      }
+    if (Object.keys(isValid).length === 0) {
       setActiveStep((prev) => prev + 1);
     } else {
       // Set touched for the fields to display validation messages
@@ -321,6 +175,8 @@ const EmployeeStepperForm: React.FC = () => {
                 if (data?.success && data.employee) {
                   dispatch(addEmployee(data.employee));
                   toast.success("Employee added Successfully");
+                  setActiveStep((prev) => prev + 1);
+                  handleClose();
                 }
 
                 if (data?.error) {
