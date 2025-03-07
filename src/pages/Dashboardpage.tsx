@@ -48,7 +48,7 @@ function Dashboardpage() {
   }, []);
 
   return (
-    <div className="p-8">
+    <div className="p-8 bg-[#f3f3f3] min-h-[90dvh]">
       <Fab
         onClick={handleOpen}
         variant="extended"
