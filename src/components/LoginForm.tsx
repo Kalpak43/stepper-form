@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import PasswordInput from "./PasswordInput";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
@@ -56,20 +57,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             helperText={formik.touched.email && formik.errors.email}
             required
           />
-          <TextField
-            label="Password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="password"
-            name="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-            required
-          />
+          <PasswordInput formik={formik} />
 
           {/* <div className="text-right">
             <Button

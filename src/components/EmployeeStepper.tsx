@@ -301,6 +301,11 @@ const EmployeeStepperForm: React.FC = () => {
                 const data = await saveEmployeeData(formik.values);
                 if (data?.success && data.employee) {
                   dispatch(addEmployee(data.employee));
+                  alert("Employee added Successfully");
+                }
+
+                if (data?.error) {
+                  alert("There was an error in adding employee");
                 }
                 setLoading(false);
               }}

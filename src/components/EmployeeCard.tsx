@@ -9,6 +9,8 @@ import {
   Divider,
   IconButton,
   Modal,
+  Tab,
+  Tabs,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -17,6 +19,7 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import CloseIcon from "@mui/icons-material/Close";
+import CakeIcon from "@mui/icons-material/Cake";
 
 const style = {
   position: "absolute",
@@ -106,8 +109,14 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
 export default EmployeeCard;
 
 export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
+  };
+
   return (
-    <Card sx={{ minWidth: 200, maxWidth: 800, margin: "auto" }}>
+    <Card sx={{ minWidth: 800, maxWidth: 800, margin: "auto" }}>
       <AppBar position="static" sx={{ padding: 1 }}>
         <Toolbar>
           <Avatar
@@ -124,7 +133,201 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
           </Typography>
         </Toolbar>
       </AppBar>
+      <Box>
+        <Tabs value={tabIndex} onChange={handleChange} variant="fullWidth">
+          <Tab label="Basic Details" />
+          <Tab label="Job Details" />
+          <Tab label="Work Details" />
+        </Tabs>
+      </Box>
+      <Divider />
       <CardContent className="space-y-4">
+        {tabIndex === 0 && (
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 600, color: "gray" }}
+              className="uppercase"
+            >
+              Contact Details:
+            </Typography>
+            <Box className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-2">
+              <div className="flex items-center gap-2 text-sm">
+                <ContactMailIcon
+                  fontSize="small"
+                  sx={{
+                    color: (theme) => alpha(theme.palette.primary.main, 0.5),
+                  }}
+                />
+                <p>{employee.work_email}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <AlternateEmailIcon
+                  fontSize="small"
+                  sx={{
+                    color: (theme) => alpha(theme.palette.primary.main, 0.4),
+                  }}
+                />
+                <p>{employee.email}</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <LocalPhoneIcon
+                  fontSize="small"
+                  sx={{
+                    color: (theme) => alpha(theme.palette.primary.main, 0.4),
+                  }}
+                />
+                <p>{employee.phone_number}</p>
+              </div>
+            </Box>
+            <Divider sx={{ marginY: 2 }} />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 600, color: "gray" }}
+              className="uppercase"
+            >
+              Personal Details:
+            </Typography>
+            <Box className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <CakeIcon
+                    fontSize="small"
+                    sx={{
+                      color: (theme) => alpha(theme.palette.primary.main, 0.5),
+                    }}
+                  />
+                  <strong>DOB</strong>
+                </div>
+                <p className="">
+                  {new Date(employee.DOB).toLocaleDateString("en-GB")}
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <strong>Gender</strong>
+                </div>
+                <p className="">{employee.gender}</p>
+              </div>
+            </Box>
+          </Box>
+        )}
+
+        {tabIndex === 1 && (
+          <>
+            <Box className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Job Title:
+                </Typography>
+                <Typography>{employee.job_title}</Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Department:
+                </Typography>
+                <Typography>{employee.department}</Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Employment Type:
+                </Typography>
+                <Typography>{employee.type}</Typography>
+              </Box>
+
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Position:
+                </Typography>
+                <Typography>{employee.level}</Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Supervisor:
+                </Typography>
+                <Typography>{employee.supervisor}</Typography>
+              </Box>
+            </Box>
+          </>
+        )}
+
+        {tabIndex === 2 && (
+          <Box>
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Date of Joining:
+                </Typography>
+                <Typography>
+                  {new Date(employee.DOJ).toLocaleDateString("en-GB")}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, color: "gray" }}
+                  className="uppercase"
+                >
+                  Shift:
+                </Typography>
+                <Typography>{employee.shift}</Typography>
+              </Box>
+            </Box>
+            <Divider sx={{ marginY: 2 }} />
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: 600, color: "gray" }}
+                className="uppercase"
+              >
+                Salary:
+              </Typography>
+              <Typography>
+                ₹{employee.salary.toLocaleString()} / {employee.frequency}
+              </Typography>
+            </Box>
+            <Divider sx={{ marginY: 2 }} />
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: 600, color: "gray" }}
+                className="uppercase"
+              >
+                Leave Balance:
+              </Typography>
+              <Typography>
+                Annual: {employee.leaves.annual}, Sick: {employee.leaves.sick}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </CardContent>
+
+      {/* <CardContent className="space-y-4">
         <Box>
           <Typography
             variant="h6"
@@ -261,32 +464,6 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
             </Box>
           </Box>
         </Box>
-      </CardContent>
-      {/* <CardContent>
-        <Grid2 container spacing={2}>
-          <Grid2 item xs={12} display="flex" justifyContent="center">
-            <Avatar
-              src={employee.profile ? employee.profile : ""}
-              sx={{ width: 100, height: 100 }}
-            />
-          </Grid2>
-          {Object.entries(employee).map(
-            ([key, value]) =>
-              key !== "profile" &&
-              key !== "password" && (
-                <Grid2 item xs={12} sm={6} key={key}>
-                  <Typography variant="body1" fontWeight="bold">
-                    {key.replace(/_/g, " ").toUpperCase()}:
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {typeof value === "object" && value !== null
-                      ? JSON.stringify(value)
-                      : value}
-                  </Typography>
-                </Grid2>
-              )
-          )}
-        </Grid2>
       </CardContent> */}
     </Card>
   );

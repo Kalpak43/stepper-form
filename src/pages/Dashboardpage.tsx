@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   Button,
   ButtonGroup,
@@ -91,17 +92,33 @@ function Dashboardpage() {
       <div className="flex items-center justify-between">
         <Typography variant="h5">Employee List</Typography>
         <ButtonGroup variant="outlined" aria-label="Basic button group">
-          <Button onClick={() => setTabular(true)}>
+          <Button
+            onClick={() => setTabular(true)}
+            disabled={tabular}
+            sx={{
+              backgroundColor: tabular
+                ? (theme) => alpha(theme.palette.primary.light, 0.2)
+                : "",
+            }}
+          >
             <TableChartIcon />
           </Button>
-          <Button onClick={() => setTabular(false)}>
+          <Button
+            onClick={() => setTabular(false)}
+            disabled={!tabular}
+            sx={{
+              backgroundColor: !tabular
+                ? (theme) => alpha(theme.palette.primary.light, 0.2)
+                : "",
+            }}
+          >
             <BadgeIcon />
           </Button>
         </ButtonGroup>
       </div>
 
       {!tabular ? (
-        <div className="space-y-4 my-8 grid grid-cols-4 gap-4">
+        <div className="space-y-4 my-8 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {employees.length > 0 &&
             employees.map((employee) => (
               <EmployeeCard key={employee.id} employee={employee} />
