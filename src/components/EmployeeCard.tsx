@@ -42,7 +42,7 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
             backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.2),
           }}
         >
-          <div className="w-[100px] aspect-square rounded-full bg-gray-400 overflow-hidden mx-auto translate-y-1/2 border">
+          <div className="w-[100px] aspect-square rounded-full bg-#424242-400 overflow-hidden mx-auto translate-y-1/2 border">
             <Avatar
               src={employee.profile}
               className=""
@@ -146,7 +146,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
           <Box>
             <Typography
               variant="h6"
-              sx={{ fontWeight: 600, color: "gray" }}
+              sx={{ fontWeight: 600, color: "#424242" }}
               className="uppercase"
             >
               Contact Details:
@@ -183,7 +183,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
             <Divider sx={{ marginY: 2 }} />
             <Typography
               variant="h6"
-              sx={{ fontWeight: 600, color: "gray" }}
+              sx={{ fontWeight: 600, color: "#424242" }}
               className="uppercase"
             >
               Personal Details:
@@ -207,7 +207,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
                 <div className="flex items-center gap-2">
                   <strong>Gender</strong>
                 </div>
-                <p className="">{employee.gender}</p>
+                <p className="capitalize">{employee.gender}</p>
               </div>
             </Box>
           </Box>
@@ -219,7 +219,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Job Title:
@@ -229,7 +229,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Department:
@@ -239,28 +239,28 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Employment Type:
                 </Typography>
-                <Typography>{employee.type}</Typography>
+                <Typography className="capitalize">{employee.type}</Typography>
               </Box>
 
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Position:
                 </Typography>
-                <Typography>{employee.level}</Typography>
+                <Typography className="capitalize">{employee.level}</Typography>
               </Box>
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Supervisor:
@@ -277,7 +277,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Date of Joining:
@@ -289,19 +289,19 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: "gray" }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Shift:
                 </Typography>
-                <Typography>{employee.shift}</Typography>
+                <Typography className="capitalize">{employee.shift}</Typography>
               </Box>
             </Box>
             <Divider sx={{ marginY: 2 }} />
             <Box>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 600, color: "gray" }}
+                sx={{ fontWeight: 600, color: "#424242" }}
                 className="uppercase"
               >
                 Salary:
@@ -314,7 +314,7 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
             <Box>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 600, color: "gray" }}
+                sx={{ fontWeight: 600, color: "#424242" }}
                 className="uppercase"
               >
                 Leave Balance:

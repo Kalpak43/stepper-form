@@ -47,10 +47,6 @@ function Dashboardpage() {
     dispatch(fetchEmployees());
   }, []);
 
-  useEffect(() => {
-    console.log(employees);
-  }, [employees]);
-
   return (
     <div className="p-8">
       <Fab

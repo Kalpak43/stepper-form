@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../app/hook";
 import { fetchEmployeeFromId } from "../utils";
-import EmployeeCard from "../components/EmployeeCard";
 import { useNavigate } from "react-router";
 import {
   alpha,
@@ -10,13 +9,11 @@ import {
   Card,
   CardContent,
   Divider,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import CloseIcon from "@mui/icons-material/Close";
 import CakeIcon from "@mui/icons-material/Cake";
 
 function Profilepage() {
@@ -81,7 +78,7 @@ function Profilepage() {
             <Box>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                sx={{ fontWeight: 600, color: "#424242" }}
                 className="uppercase"
               >
                 Contact Details:
@@ -118,7 +115,7 @@ function Profilepage() {
               <Divider sx={{ marginY: 2 }} />
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                sx={{ fontWeight: 600, color: "#424242" }}
                 className="uppercase"
               >
                 Personal Details:
@@ -152,7 +149,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Job Title:
@@ -162,7 +159,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Department:
@@ -172,7 +169,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Employment Type:
@@ -183,7 +180,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Position:
@@ -193,7 +190,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Supervisor:
@@ -207,7 +204,7 @@ function Profilepage() {
                 <Box>
                   <Typography
                     variant="h6"
-                    sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                    sx={{ fontWeight: 600, color: "#424242" }}
                     className="uppercase"
                   >
                     Date of Joining:
@@ -219,7 +216,7 @@ function Profilepage() {
                 <Box>
                   <Typography
                     variant="h6"
-                    sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                    sx={{ fontWeight: 600, color: "#424242" }}
                     className="uppercase"
                   >
                     Shift:
@@ -231,7 +228,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Salary:
@@ -244,7 +241,7 @@ function Profilepage() {
               <Box>
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: 600, color: theme => alpha(theme.palette.primary.main, 0.6) }}
+                  sx={{ fontWeight: 600, color: "#424242" }}
                   className="uppercase"
                 >
                   Leave Balance:
