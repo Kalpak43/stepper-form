@@ -75,10 +75,7 @@ const EmployeeStepperForm: React.FC = () => {
       .test("valid-date", "Invalid date", (value) =>
         value ? !isNaN(new Date(value).getTime()) : false
       )
-      .test("min-date", "DOB cannot be in the past", (value) =>
-        value ? new Date(value) >= new Date() : false
-      )
-      .required("Date of Birth is required"),
+      .required("Date of Joning is required"),
     location: Yup.mixed<"office" | "remote" | "hybrid" | "">()
       .oneOf(["office", "remote", "hybrid"], "Invalid location")
       .required("Location is required"),

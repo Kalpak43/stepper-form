@@ -204,6 +204,7 @@ function EmployeeTable({ employees }: { employees: EmployeeWithId[] }) {
                         width="40"
                         height="40"
                         style={{ borderRadius: "50%" }}
+                        className="border border-black"
                       />
                     ) : (
                       `${employee.first_name[0]}${employee.last_name[0]}`
@@ -215,23 +216,23 @@ function EmployeeTable({ employees }: { employees: EmployeeWithId[] }) {
                 <TableCell>{employee.display_name}</TableCell>
                 <TableCell>{employee.work_email}</TableCell>
                 <TableCell>{employee.phone_number}</TableCell>
-                <TableCell>{employee.gender}</TableCell>
+                <TableCell className="capitalize">{employee.gender}</TableCell>
                 <TableCell>
                   {new Date(employee.DOB).toLocaleDateString("en-GB")}
                 </TableCell>
-                <TableCell>{employee.job_title}</TableCell>
-                <TableCell>{employee.department}</TableCell>
-                <TableCell>{employee.level}</TableCell>
-                <TableCell>{employee.supervisor}</TableCell>
+                <TableCell className="capitalize">{employee.job_title}</TableCell>
+                <TableCell className="capitalize">{employee.department}</TableCell>
+                <TableCell className="capitalize">{employee.level}</TableCell>
+                <TableCell className="capitalize">{employee.supervisor}</TableCell>
                 <TableCell>
                   {new Date(employee.DOJ).toLocaleDateString("en-GB")}
                 </TableCell>
-                <TableCell>{employee.location}</TableCell>
-                <TableCell>{employee.shift}</TableCell>
+                <TableCell className="capitalize">{employee.location}</TableCell>
+                <TableCell className="capitalize">{employee.shift}</TableCell>
                 <TableCell>
                   ₹{employee.salary.toLocaleString()} / {employee.frequency}
                 </TableCell>
-                <TableCell>
+                <TableCell className="capitalize"> 
                   {employee.leaves.annual} Annual, {employee.leaves.sick} Sick
                 </TableCell>
                 <TableCell

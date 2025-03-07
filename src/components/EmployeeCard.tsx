@@ -324,7 +324,9 @@ export function ExpandedCard({ employee }: { employee: EmployeeWithId }) {
                 >
                   Supervisor:
                 </Typography>
-                <Typography>{employee.supervisor}</Typography>
+                <Typography className="capitalize">
+                  {employee.supervisor}
+                </Typography>
               </Box>
             </Box>
           </>

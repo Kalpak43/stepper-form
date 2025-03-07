@@ -19,6 +19,8 @@ import { useNavigate } from "react-router";
 import EmployeeTable from "../components/EmployeeTable";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import BadgeIcon from "@mui/icons-material/Badge";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { Loader2 } from "lucide-react";
 
 const style = {
   position: "absolute",
@@ -32,7 +34,7 @@ function Dashboardpage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
-  const { employees } = useAppSelector((state) => state.employee);
+  const { employees, loading } = useAppSelector((state) => state.employee);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -50,6 +52,13 @@ function Dashboardpage() {
   useEffect(() => {
     console.log(employees);
   }, [employees]);
+
+  if (loading)
+    return (
+      <div className="min-h-[600px] flex flex-col items-center justify-center text-lg">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return (
     <div className="p-8 bg-[#f3f3f3] min-h-[90dvh]">
@@ -117,19 +126,28 @@ function Dashboardpage() {
         </ButtonGroup>
       </div>
 
-      {!tabular ? (
-        <div className="space-y-4 my-8 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {employees.length > 0 &&
-            employees.map((employee) => (
-              <EmployeeCard key={employee.id} employee={employee} />
-            ))}
-        </div>
+      {employees.length > 0 ? (
+        <>
+          {!tabular ? (
+            <div className="space-y-4 my-8 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {employees.length > 0 &&
+                employees.map((employee) => (
+                  <EmployeeCard key={employee.id} employee={employee} />
+                ))}
+            </div>
+          ) : (
+            employees && (
+              <div className="my-8">
+                <EmployeeTable employees={employees} />
+              </div>
+            )
+          )}
+        </>
       ) : (
-        employees && (
-          <div className="my-8">
-            <EmployeeTable employees={employees} />
-          </div>
-        )
+        <div className="min-h-[500px] flex flex-col items-center justify-center text-lg text-red-400">
+          <ErrorOutlineIcon fontSize="large" />
+          No Employees Found
+        </div>
       )}
     </div>
   );
