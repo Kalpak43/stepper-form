@@ -40,6 +40,7 @@ export const checkSession = createAsyncThunk(
     }
 
     dispatch(setLoading(false));
+    console.log(1);
 
     // Listen for future auth state changes
     supabase.auth.onAuthStateChange(async (_, session) => {
@@ -50,6 +51,7 @@ export const checkSession = createAsyncThunk(
           .eq("id", session.user.id)
           .single();
 
+        console.log(2);
         dispatch(
           authChanged({
             user: session.user,
@@ -80,7 +82,7 @@ export const login = createAsyncThunk(
     });
 
     if (error) {
-      thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
 
     const { user } = data;
