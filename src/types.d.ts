@@ -7,12 +7,12 @@ interface Employee {
   display_name: string;
   phone_number: string;
   gender: "male" | "female" | "other";
-  DOB: Date;
+  DOB: string;
   job_title: string;
   department: string;
   type: string;
   level: string;
-  DOJ: Date;
+  DOJ: string;
   location: string;
   salary: number;
   frequency: string;

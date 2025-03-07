@@ -1,0 +1,19 @@
+.form-container {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+@media screen and (max-height: 700px) {
+  .form-container {
+    max-height: 200px;
+    overflow-y: scroll;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .form-modal {
+    min-width: auto;
+    max-width: calc(100% - 10px);
+    overflow-y: scroll;
+  }
+}

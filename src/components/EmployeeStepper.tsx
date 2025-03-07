@@ -6,7 +6,7 @@ import {
   CardContent,
   Divider,
   FormControl,
-  IconButton,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -54,8 +54,13 @@ const EmployeeStepperForm: React.FC = () => {
     gender: Yup.mixed<"male" | "female" | "other">()
       .oneOf(["male", "female", "other"], "Invalid gender")
       .required("Gender is required"),
-    DOB: Yup.date()
-      .max(new Date(), "DOB cannot be in the future")
+    DOB: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("max-date", "DOB cannot be in the future", (value) =>
+        value ? new Date(value) <= new Date() : false
+      )
       .required("Date of Birth is required"),
     job_title: Yup.string().required("Job title is required"),
     department: Yup.string().required("Department is required"),
@@ -63,10 +68,15 @@ const EmployeeStepperForm: React.FC = () => {
     level: Yup.mixed<"junior" | "mid" | "senior" | "lead">()
       .oneOf(["junior", "mid", "senior", "lead"], "Invalid level")
       .required("Level is required"),
-    DOJ: Yup.date()
-      .min(new Date(), "DOJ cannot be in the past")
-      .required("Date of Joining is required"),
-    location: Yup.mixed<"office" | "remote" | "hybrid">()
+    DOJ: Yup.string()
+      .test("valid-date", "Invalid date", (value) =>
+        value ? !isNaN(new Date(value).getTime()) : false
+      )
+      .test("min-date", "DOB cannot be in the past", (value) =>
+        value ? new Date(value) >= new Date() : false
+      )
+      .required("Date of Birth is required"),
+    location: Yup.mixed<"office" | "remote" | "hybrid" | "">()
       .oneOf(["office", "remote", "hybrid"], "Invalid location")
       .required("Location is required"),
     salary: Yup.number()
@@ -101,7 +111,7 @@ const EmployeeStepperForm: React.FC = () => {
       .required("Password is required"),
   });
 
-  const formik = useFormik<Employee>({
+  const formik = useFormik({
     initialValues: {
       profile: null,
       work_email: "",
@@ -110,13 +120,13 @@ const EmployeeStepperForm: React.FC = () => {
       last_name: "",
       display_name: "",
       phone_number: "",
-      gender: "male",
-      DOB: new Date(),
+      gender: "",
+      DOB: "",
       job_title: "",
       department: "",
       type: "",
       level: "",
-      DOJ: new Date(),
+      DOJ: "",
       location: "office",
       salary: 0,
       frequency: "monthly",
@@ -141,8 +151,8 @@ const EmployeeStepperForm: React.FC = () => {
     },
   });
 
-  const stepOneValidation = (values: Employee) => {
-    const errors: Partial<Employee> = {};
+  const stepOneValidation = (values: any) => {
+    const errors: Partial<any> = {};
 
     if (!values.first_name) {
       errors.first_name = "First name is required";
@@ -156,20 +166,23 @@ const EmployeeStepperForm: React.FC = () => {
     if (!values.password) {
       errors.password = "Password is required";
     }
+    if (values.gender.trim() === "") {
+      errors.password = "Password is required";
+    }
     if (!values.work_email) {
       errors.work_email = "Work Email is required";
     }
     if (!values.phone_number) {
       errors.phone_number = "Phone number is required";
     }
-    if (!values.DOB) {
+    if (!values.DOB || isNaN(new Date(values.DOB).getTime())) {
       errors.DOB = "DOB is required";
     }
 
     return errors;
   };
-  const stepTwoValidation = (values: Employee) => {
-    const errors: Partial<Employee> = {};
+  const stepTwoValidation = (values: any) => {
+    const errors: Partial<any> = {};
 
     if (!values.job_title) {
       errors.job_title = "Job Title is required";
@@ -233,6 +246,7 @@ const EmployeeStepperForm: React.FC = () => {
         salary: true,
         frequency: true,
         supervisor: true,
+        gender: true,
       });
     }
   };
@@ -273,12 +287,18 @@ const EmployeeStepperForm: React.FC = () => {
       />
 
       <CardContent>
-        <Box sx={{ mt: 3 }}>
-          {activeStep === 0 && <BasicDetailsField formik={formik} />}
+        <Box sx={{ mt: 3 }} className="form-container">
+          {activeStep === 0 && (
+            <BasicDetailsField formik={formik as FormikProps<Employee>} />
+          )}
 
-          {activeStep === 1 && <JobDetailsField formik={formik} />}
+          {activeStep === 1 && (
+            <JobDetailsField formik={formik as FormikProps<Employee>} />
+          )}
 
-          {activeStep === 2 && <WorkDetailsField formik={formik} />}
+          {activeStep === 2 && (
+            <WorkDetailsField formik={formik as FormikProps<Employee>} />
+          )}
         </Box>
       </CardContent>
       <Divider
@@ -298,7 +318,7 @@ const EmployeeStepperForm: React.FC = () => {
               onClick={async () => {
                 console.log("SOOMETHINK");
                 setLoading(true);
-                const data = await saveEmployeeData(formik.values);
+                const data = await saveEmployeeData(formik.values as Employee);
                 if (data?.success && data.employee) {
                   dispatch(addEmployee(data.employee));
                   alert("Employee added Successfully");
@@ -345,23 +365,25 @@ export const BasicDetailsField = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-2">
       <div>
         <CircleImageInput value={formik.values.profile} setValue={setImage} />
       </div>
-      <TextField
-        label="Display Name"
-        name="display_name"
-        value={formik.values.display_name}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={
-          formik.touched.display_name && Boolean(formik.errors.display_name)
-        }
-        helperText={formik.touched.display_name && formik.errors.display_name}
-        fullWidth
-        className="col-span-2"
-      />
+      <div className="lg:col-span-2 h-full flex items-center">
+        <TextField
+          label="Display Name"
+          name="display_name"
+          value={formik.values.display_name}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            formik.touched.display_name && Boolean(formik.errors.display_name)
+          }
+          helperText={formik.touched.display_name && formik.errors.display_name}
+          fullWidth
+          className=""
+        />
+      </div>
 
       <TextField
         label="First Name"
@@ -461,13 +483,21 @@ export const BasicDetailsField = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.gender && Boolean(formik.errors.gender)}
-            helperText={formik.touched.gender && formik.errors.gender}
             fullWidth
           >
             <MenuItem value="male">Male</MenuItem>
             <MenuItem value="female">Female</MenuItem>
             <MenuItem value="other">Other</MenuItem>
           </Select>
+          {formik.touched.gender && formik.errors.gender && (
+            <FormHelperText
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              {formik.errors.gender}
+            </FormHelperText>
+          )}
         </FormControl>
       </Box>
 
@@ -479,7 +509,11 @@ export const BasicDetailsField = ({
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         error={formik.touched.DOB && Boolean(formik.errors.DOB)}
-        helperText={formik.touched.DOB && formik.errors.DOB}
+        helperText={
+          formik.touched.DOB && formik.errors.DOB
+            ? String(formik.errors.DOB)
+            : ""
+        }
         fullWidth
         InputLabelProps={{
           shrink: true,
@@ -556,7 +590,6 @@ export const JobDetailsField = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.level && Boolean(formik.errors.level)}
-            helperText={formik.touched.level && formik.errors.level}
             fullWidth
           >
             <MenuItem value="junior">Junior</MenuItem>
@@ -564,6 +597,15 @@ export const JobDetailsField = ({
             <MenuItem value="senior">Senior</MenuItem>
             <MenuItem value="lead">Lead</MenuItem>
           </Select>
+          {formik.touched.level && formik.errors.level && (
+            <FormHelperText
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              {formik.errors.level}
+            </FormHelperText>
+          )}
         </FormControl>
       </Box>
 
@@ -601,13 +643,21 @@ export const JobDetailsField = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.location && Boolean(formik.errors.location)}
-            helperText={formik.touched.location && formik.errors.location}
             fullWidth
           >
             <MenuItem value="office">Office</MenuItem>
             <MenuItem value="remote">Remote</MenuItem>
             <MenuItem value="hybrid">Hybrid</MenuItem>
           </Select>
+          {formik.touched.location && formik.errors.location && (
+            <FormHelperText
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              {formik.errors.location}
+            </FormHelperText>
+          )}
         </FormControl>
       </Box>
 
@@ -644,13 +694,21 @@ export const JobDetailsField = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.frequency && Boolean(formik.errors.frequency)}
-            helperText={formik.touched.frequency && formik.errors.frequency}
             fullWidth
           >
             <MenuItem value="monthly">Monthly</MenuItem>
             <MenuItem value="weekly">Weekly</MenuItem>
             <MenuItem value="biweekly">Bi-weekly</MenuItem>
           </Select>
+          {formik.touched.frequency && formik.errors.frequency && (
+            <FormHelperText
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              {formik.errors.frequency}
+            </FormHelperText>
+          )}
         </FormControl>
       </Box>
 
@@ -694,7 +752,6 @@ export const WorkDetailsField = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.shift && Boolean(formik.errors.shift)}
-            helperText={formik.touched.shift && formik.errors.shift}
             fullWidth
           >
             <MenuItem value="day">Day</MenuItem>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { styled } from "@mui/material/styles";
+import { Box } from "@mui/material";
 
 const Input = styled("input")({
   display: "none",
@@ -41,8 +41,13 @@ const CircleImageInput = ({
   };
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginY: 2,
+      }}
     >
       <label htmlFor="icon-button-file">
         <Avatar
@@ -59,10 +64,11 @@ const CircleImageInput = ({
           onChange={handleImageChange}
         />
       </label>
-      <IconButton color="primary" aria-label="upload picture" component="span">
+      <small>Profile</small>
+      {/* <IconButton color="primary" aria-label="upload picture" component="span">
         <CameraAltIcon />
-      </IconButton>
-    </div>
+      </IconButton> */}
+    </Box>
   );
 };
 
