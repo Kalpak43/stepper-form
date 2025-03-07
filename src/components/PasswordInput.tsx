@@ -23,6 +23,9 @@ function PasswordInput({ formik }: { formik: any }) {
         onBlur={formik.handleBlur}
         error={formik.touched.password && Boolean(formik.errors.password)}
         helperText={formik.touched.password && formik.errors.password}
+        sx={{
+          marginBlock: "0.5rem",
+        }}
         required
         InputProps={{
           endAdornment: (

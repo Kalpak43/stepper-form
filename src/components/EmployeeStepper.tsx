@@ -199,7 +199,7 @@ const EmployeeStepperForm: React.FC = () => {
     if (!values.level) {
       errors.level = "Level is required";
     }
-    if (!values.DOJ) {
+    if (!values.DOJ || isNaN(new Date(values.DOJ).getTime())) {
       errors.DOJ = "DOJ is required";
     }
     if (!values.location) {
@@ -224,11 +224,10 @@ const EmployeeStepperForm: React.FC = () => {
     if (activeStep == 1) errors = stepTwoValidation(formik.values);
 
     if (Object.keys(errors).length === 0) {
-      setActiveStep((prev) => prev + 1);
       const isValid = await formik.validateForm();
 
       if (Object.keys(isValid).length === 0) {
-        console.log("IS valid");
+        setActiveStep((prev) => prev + 1);
       }
     } else {
       // Set touched for the fields to display validation messages
