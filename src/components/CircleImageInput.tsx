@@ -12,19 +12,28 @@ const CircleImageInput = ({
   value,
   setValue,
 }: {
-  value: File | null;
-  setValue: (x: File) => void;
+  value: File | string | null;
+  setValue: (x: File | string) => void;
 }) => {
   const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (value) {
       setValue(value);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        reader.result && setImage(reader.result as string);
-      };
-      reader.readAsDataURL(value);
+      if (typeof value === "string") {
+        setImage(value);
+        return;
+      }
+
+      if (value instanceof File) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          reader.result && setImage(reader.result as string);
+        };
+        reader.readAsDataURL(value);
+
+        return;
+      }
     }
   }, [value]);
 

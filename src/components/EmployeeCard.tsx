@@ -20,6 +20,7 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import CloseIcon from "@mui/icons-material/Close";
 import CakeIcon from "@mui/icons-material/Cake";
+import EditFormStepper from "./EditFormStepper";
 
 const style = {
   position: "absolute",
@@ -33,6 +34,11 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
+
   return (
     <>
       <Card key={employee.id} className="text-center h-full">
@@ -79,6 +85,15 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
           >
             View Profile
           </Button>
+          <Button
+            variant="contained"
+            onClick={handleOpenEdit}
+            sx={{
+              marginTop: 4,
+            }}
+          >
+            Edit Profile
+          </Button>
         </CardContent>
       </Card>
       <Modal
@@ -97,6 +112,27 @@ function EmployeeCard({ employee }: { employee: EmployeeWithId }) {
               color: "white",
             }}
             onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Modal>
+      <Modal
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <EditFormStepper employee={employee} />
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              color: "white",
+            }}
+            onClick={handleCloseEdit}
           >
             <CloseIcon />
           </IconButton>

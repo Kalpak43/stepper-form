@@ -19,6 +19,19 @@ export const employeeSlice = createSlice({
     addEmployee: (state, action) => {
       state.employees.push(action.payload as EmployeeWithId);
     },
+    updateEmployee: (state, action) => {
+      const { uuid, ...updatedEmployee } = action.payload;
+      const index = state.employees.findIndex((emp) => emp.uuid === uuid);
+
+      console.log(uuid, index);
+
+      if (index !== -1) {
+        state.employees[index] = {
+          ...state.employees[index],
+          ...updatedEmployee,
+        };
+      }
+    },
   },
   extraReducers(builder) {
     builder
@@ -36,6 +49,6 @@ export const employeeSlice = createSlice({
   },
 });
 
-export const { addEmployee } = employeeSlice.actions;
+export const { addEmployee, updateEmployee } = employeeSlice.actions;
 
 export default employeeSlice.reducer;

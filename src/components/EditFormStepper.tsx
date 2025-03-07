@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -20,16 +20,18 @@ import {
 import { FormikProps, useFormik } from "formik";
 import * as Yup from "yup";
 import CircleImageInput from "./CircleImageInput";
-import { saveEmployeeData } from "../utils";
+import { editEmployeeData } from "../utils";
 import { useAppDispatch } from "../app/hook";
-import { addEmployee } from "../features/employees/employeeSlice";
+import { updateEmployee } from "../features/employees/employeeSlice";
 import PasswordInput from "./PasswordInput";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
-const EmployeeStepperForm: React.FC = () => {
+const EditFormStepper: React.FC<{ employee: EmployeeWithId }> = ({
+  employee,
+}) => {
   const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -37,13 +39,16 @@ const EmployeeStepperForm: React.FC = () => {
   const employeeSchema = Yup.object().shape({
     profile: Yup.mixed()
       .test("fileRequired", "Profile image is required", (value) => !!value)
-      .test("fileType", "Only images are allowed", (value) =>
-        value
-          ? ["image/jpeg", "image/png", "image/gif"].includes(
-              (value as File).type
-            )
-          : true
-      ),
+      .test("fileType", "Only images are allowed", (value) => {
+        if (typeof value === "string") {
+          // If it's a URL, assume it's valid
+          return true;
+        }
+        if (value instanceof File) {
+          return ["image/jpeg", "image/png", "image/gif"].includes(value.type);
+        }
+        return false; // Neither a file nor a URL
+      }),
     work_email: Yup.string()
       .email("Invalid work email")
       .required("Work email is required"),
@@ -115,32 +120,7 @@ const EmployeeStepperForm: React.FC = () => {
   });
 
   const formik = useFormik({
-    initialValues: {
-      profile: null,
-      work_email: "",
-      email: "",
-      first_name: "",
-      last_name: "",
-      display_name: "",
-      phone_number: "",
-      gender: "",
-      DOB: "",
-      job_title: "",
-      department: "",
-      type: "",
-      level: "",
-      DOJ: "",
-      location: "office",
-      salary: 0,
-      frequency: "monthly",
-      supervisor: "",
-      shift: "day",
-      leaves: {
-        annual: 5,
-        sick: 6,
-      },
-      password: "",
-    },
+    initialValues: { ...employee },
     validationSchema: employeeSchema,
     onSubmit: async (values) => {
       // setLoading(true);
@@ -222,13 +202,13 @@ const EmployeeStepperForm: React.FC = () => {
     let errors = {};
     if (activeStep == 0) errors = stepOneValidation(formik.values);
     if (activeStep == 1) errors = stepTwoValidation(formik.values);
+    console.log(errors);
     if (Object.keys(errors).length === 0) {
       const isValid = await formik.validateForm();
-
-      if (Object.keys(isValid).length === 0) {
-        console.log(Object.keys(isValid).length);
-      }
       setActiveStep((prev) => prev + 1);
+      if (Object.keys(isValid).length === 0) {
+        console.log(isValid);
+      }
     } else {
       // Set touched for the fields to display validation messages
       formik.setTouched({
@@ -291,15 +271,15 @@ const EmployeeStepperForm: React.FC = () => {
       <CardContent>
         <Box sx={{ mt: 3 }} className="form-container">
           {activeStep === 0 && (
-            <BasicDetailsField formik={formik as FormikProps<Employee>} />
+            <BasicDetailsField formik={formik as FormikProps<EmployeeWithId>} />
           )}
 
           {activeStep === 1 && (
-            <JobDetailsField formik={formik as FormikProps<Employee>} />
+            <JobDetailsField formik={formik as FormikProps<EmployeeWithId>} />
           )}
 
           {activeStep === 2 && (
-            <WorkDetailsField formik={formik as FormikProps<Employee>} />
+            <WorkDetailsField formik={formik as FormikProps<EmployeeWithId>} />
           )}
         </Box>
       </CardContent>
@@ -320,13 +300,17 @@ const EmployeeStepperForm: React.FC = () => {
               onClick={async () => {
                 console.log("SOOMETHINK");
                 setLoading(true);
-                const data = await saveEmployeeData(formik.values as Employee);
+                const data = await editEmployeeData(
+                  formik.values as EditableEmployee
+                );
                 if (data?.success && data.employee) {
-                  dispatch(addEmployee(data.employee));
+                  console.log("DONE", data.employee);
+                  dispatch(updateEmployee(data.employee));
                   toast.success("Employee added Successfully");
                 }
 
                 if (data?.error) {
+                  console.log("DONE", data.error);
                   toast.error("There was an error in adding employee");
                 }
                 setLoading(false);
@@ -345,31 +329,15 @@ const EmployeeStepperForm: React.FC = () => {
   );
 };
 
-export default EmployeeStepperForm;
+export default EditFormStepper;
 
 export const BasicDetailsField = ({
   formik,
 }: {
-  formik: FormikProps<Employee>;
+  formik: FormikProps<EmployeeWithId>;
 }) => {
-  const [changed, setChanged] = useState(false);
-
-  useEffect(() => {
-    const { first_name, last_name } = formik.values;
-    if (!changed) {
-      if (first_name || last_name) {
-        formik.setFieldValue(
-          "display_name",
-          `${first_name.trim()} ${last_name.trim()}`.trim()
-        );
-      }
-    }
-  }, [formik.values.first_name, formik.values.last_name]);
-
-  const setImage = (image: string | File) => {
-    if (image instanceof File) {
-      formik.setFieldValue("profile", image);
-    }
+  const setImage = (image: File | string) => {
+    formik.setFieldValue("profile", image);
   };
 
   return (
@@ -383,7 +351,6 @@ export const BasicDetailsField = ({
           name="display_name"
           value={formik.values.display_name}
           onChange={(e) => {
-            setChanged(true);
             formik.handleChange(e);
           }}
           onBlur={formik.handleBlur}
@@ -437,6 +404,7 @@ export const BasicDetailsField = ({
         sx={{
           marginBlock: "0.5rem",
         }}
+        disabled
       />
       <TextField
         label="Email"
@@ -528,7 +496,7 @@ export const BasicDetailsField = ({
 export const JobDetailsField = ({
   formik,
 }: {
-  formik: FormikProps<Employee>;
+  formik: FormikProps<EmployeeWithId>;
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">
@@ -731,7 +699,7 @@ export const JobDetailsField = ({
 export const WorkDetailsField = ({
   formik,
 }: {
-  formik: FormikProps<Employee>;
+  formik: FormikProps<EmployeeWithId>;
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">

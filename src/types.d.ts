@@ -28,4 +28,9 @@ interface Employee {
 interface EmployeeWithId extends Employee {
   id: number;
   profile: string;
+  uuid: string;
+}
+
+interface EditableEmployee extends EmployeeWithId {
+  profile: string | File;
 }

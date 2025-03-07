@@ -150,3 +150,77 @@ export const fetchEmployeeFromId = async (id: string) => {
 
   return data;
 };
+
+export const editEmployeeData = async (employee: EditableEmployee) => {
+  // const uuid = await signupUser(employee.work_email, employee.password);
+
+  // if (!uuid)
+  //   return {
+  //     success: false,
+  //     error: "Unable to register user",
+  //   };
+
+  if (employee.profile && employee.profile instanceof File) {
+    let profileUrl = null;
+
+    profileUrl = await uploadProfileImage(employee.profile);
+    console.log(2);
+    if (!profileUrl) {
+      console.error("Failed to upload profile image.");
+      console.log(3);
+      return {
+        success: false,
+        error: "Unable to register user",
+      };
+    }
+
+    employee.profile = profileUrl;
+  }
+
+  console.log(4);
+  const { error } = await supabase
+    .from("employees")
+    .update([
+      {
+        profile: employee.profile,
+        work_email: employee.work_email,
+        email: employee.email,
+        first_name: employee.first_name,
+        last_name: employee.last_name,
+        display_name: employee.display_name,
+        phone_number: employee.phone_number,
+        gender: employee.gender,
+        DOB: employee.DOB,
+        job_title: employee.job_title,
+        department: employee.department,
+        type: employee.type,
+        level: employee.level,
+        DOJ: employee.DOJ,
+        location: employee.location,
+        salary: employee.salary,
+        frequency: employee.frequency,
+        supervisor: employee.supervisor,
+        shift: employee.shift,
+        leaves: employee.leaves,
+        password: employee.password, // Ideally, hash this before storing
+        uuid: employee.uuid,
+      },
+    ])
+    .eq("uuid", employee.uuid);
+  console.log(5);
+
+  if (error) {
+    return {
+      success: false,
+      error: "Unable to register user",
+    };
+  } else {
+    return {
+      success: true,
+      error: null,
+      employee: {
+        ...employee,
+      } as EmployeeWithId,
+    };
+  }
+};
