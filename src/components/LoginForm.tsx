@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -23,8 +23,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
-
-  const [hide, setHide] = useState(false);
 
   const formik = useFormik({
     initialValues: {

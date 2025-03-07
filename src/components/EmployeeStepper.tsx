@@ -23,6 +23,7 @@ import CircleImageInput from "./CircleImageInput";
 import { saveEmployeeData } from "../utils";
 import { useAppDispatch } from "../app/hook";
 import { addEmployee } from "../features/employees/employeeSlice";
+import PasswordInput from "./PasswordInput";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
@@ -412,19 +413,7 @@ export const BasicDetailsField = ({
         }}
       />
 
-      <TextField
-        label="Password"
-        name="password"
-        value={formik.values.password}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.password && Boolean(formik.errors.password)}
-        helperText={formik.touched.password && formik.errors.password}
-        fullWidth
-        sx={{
-          marginBlock: "0.5rem",
-        }}
-      />
+      <PasswordInput formik={formik} />
 
       <TextField
         label="Work Email"
