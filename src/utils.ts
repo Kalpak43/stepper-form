@@ -1,5 +1,4 @@
 import { supabase } from "./supbase";
-import { jwtDecode } from "jwt-decode";
 
 export const checkAdmin = async (): Promise<boolean> => {
   const { data, error } = await supabase.auth.getUser();
@@ -27,7 +26,7 @@ const uploadProfileImage = async (file: File) => {
   const fileName = `${Date.now()}.${fileExt}`;
   const filePath = `profiles/${fileName}`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from("employees")
     .upload(filePath, file);
 

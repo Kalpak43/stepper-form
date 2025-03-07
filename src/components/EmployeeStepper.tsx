@@ -80,7 +80,7 @@ const EmployeeStepperForm: React.FC = () => {
       .oneOf(["office", "remote", "hybrid"], "Invalid location")
       .required("Location is required"),
     salary: Yup.number()
-      .positive("Salary must be a positive number")
+      .min(0, "Salary must be at least 0")
       .required("Salary is required"),
     frequency: Yup.mixed<"monthly" | "weekly" | "biweekly">()
       .oneOf(["monthly", "weekly", "biweekly"], "Invalid Salary frequency")
@@ -202,7 +202,7 @@ const EmployeeStepperForm: React.FC = () => {
     if (!values.location) {
       errors.location = "Phone number is required";
     }
-    if (!values.salary) {
+    if (isNaN(values.salary)) {
       errors.salary = -1;
     }
     if (!values.frequency) {
