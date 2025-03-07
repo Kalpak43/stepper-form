@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { logout } from "../features/auth/authThunk";
+import { toast } from "react-toastify";
 
 function Header() {
   const dispatch = useAppDispatch();
@@ -26,6 +27,7 @@ function Header() {
 
   const handleLogout = async () => {
     await dispatch(logout());
+    toast.success("Logged out successfully");
   };
 
   return (

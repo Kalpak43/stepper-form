@@ -24,6 +24,8 @@ import { saveEmployeeData } from "../utils";
 import { useAppDispatch } from "../app/hook";
 import { addEmployee } from "../features/employees/employeeSlice";
 import PasswordInput from "./PasswordInput";
+import { toast } from "react-toastify";
+import { LoaderCircle } from "lucide-react";
 
 const steps = ["Basic Details", "Job Details", "Work Details"];
 
@@ -45,7 +47,7 @@ const EmployeeStepperForm: React.FC = () => {
     work_email: Yup.string()
       .email("Invalid work email")
       .required("Work email is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    email: Yup.string().email("Invalid email"),
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
     display_name: Yup.string().required("Display name is required"),
@@ -322,16 +324,16 @@ const EmployeeStepperForm: React.FC = () => {
                 const data = await saveEmployeeData(formik.values as Employee);
                 if (data?.success && data.employee) {
                   dispatch(addEmployee(data.employee));
-                  alert("Employee added Successfully");
+                  toast.success("Employee added Successfully");
                 }
 
                 if (data?.error) {
-                  alert("There was an error in adding employee");
+                  toast.error("There was an error in adding employee");
                 }
                 setLoading(false);
               }}
             >
-              {loading ? "Submitting..." : "Submit"}
+              {loading ? <LoaderCircle className="animate-spin" /> : "Submit"}
             </Button>
           ) : (
             <Button variant="contained" color="primary" onClick={handleNext}>
@@ -351,13 +353,17 @@ export const BasicDetailsField = ({
 }: {
   formik: FormikProps<Employee>;
 }) => {
+  const [changed, setChanged] = useState(false);
+
   useEffect(() => {
     const { first_name, last_name } = formik.values;
-    if (first_name || last_name) {
-      formik.setFieldValue(
-        "display_name",
-        `${first_name.trim()} ${last_name.trim()}`.trim()
-      );
+    if (!changed) {
+      if (first_name || last_name) {
+        formik.setFieldValue(
+          "display_name",
+          `${first_name.trim()} ${last_name.trim()}`.trim()
+        );
+      }
     }
   }, [formik.values.first_name, formik.values.last_name]);
 
@@ -375,7 +381,10 @@ export const BasicDetailsField = ({
           label="Display Name"
           name="display_name"
           value={formik.values.display_name}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            setChanged(true);
+            formik.handleChange(e);
+          }}
           onBlur={formik.handleBlur}
           error={
             formik.touched.display_name && Boolean(formik.errors.display_name)

@@ -9,12 +9,15 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import PasswordInput from "./PasswordInput";
+import { useAppSelector } from "../app/hook";
+import { LoaderCircle } from "lucide-react";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
+  const { loading } = useAppSelector((state) => state.auth);
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email format")
@@ -57,25 +60,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           />
           <PasswordInput formik={formik} />
 
-          {/* <div className="text-right">
-            <Button
-              type="button"
-              variant="text"
-              size="small"
-              sx={{
-                fontSize: "0.6rem",
-              }}
-            >
-              Change Password
-            </Button>
-          </div> */}
           <Button
             type="submit"
             variant="contained"
             fullWidth
             sx={{ marginTop: 2 }}
           >
-            Login
+            {loading ? <LoaderCircle className="animate-spin" /> : "Login"}
           </Button>
         </form>
       </CardContent>

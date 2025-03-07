@@ -13,18 +13,23 @@ import {
   UserProtectedRoute,
 } from "./components/ProtectedRoute";
 import Layout from "./Layout";
+import { toast } from "react-toastify";
 
 function App() {
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.auth);
+  const { user, error } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(checkSession());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log(loading);
-  }, [loading]);
+    if (user) toast.success("Logged in Successfully");
+  }, [user]);
+
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
 
   return (
     <Routes>

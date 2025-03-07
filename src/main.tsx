@@ -7,6 +7,8 @@ import { store } from "./app/store.ts";
 import { BrowserRouter } from "react-router";
 import { ThemeProvider } from "@emotion/react";
 import theme from "./theme.ts";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,6 +16,7 @@ createRoot(document.getElementById("root")!).render(
       <Provider store={store}>
         <BrowserRouter>
           <App />
+          <ToastContainer />
         </BrowserRouter>
       </Provider>
     </ThemeProvider>
